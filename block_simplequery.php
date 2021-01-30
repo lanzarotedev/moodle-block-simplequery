@@ -40,13 +40,13 @@ class block_simplequery extends block_base {
         $this->content = new stdClass;
 
         $table_header = '<div class="table-responsive">
-            <caption>Table shows 10 last students first and last names</caption>
+            <caption>Table shows 5 users enrolled on Example Course that have the same last name</caption>
             <table class="table table-striped table-hover">
                 <thead>
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">First Name</th>
-                    <th scope="col">Last Name</th>
+                    <th scope="col">User Lastname</th>
+                    <th scope="col">Course Name</th>
+                    <th scope="col">Count of Enrolled</th>
                 </tr>
                 </thead>
                 <tbody>';
@@ -57,20 +57,33 @@ class block_simplequery extends block_base {
 
         $this->content->text = $table_header;
 
-        $sql = "SELECT firstname, lastname FROM {user}
-                ORDER BY id DESC LIMIT 10";
+//        $sql = "SELECT firstname, lastname FROM {user}
+//                ORDER BY id DESC LIMIT 10";
 
-        $users = $DB->get_records_sql($sql); //returns array of stdClass objects
+        $sql="SELECT {user}.lastname AS UserLastname, 
+                    COUNT({user}.lastname) AS CountOfEnrolled, 
+                    {course}.fullname AS CourseName 
+            FROM mdl_course 
+            LEFT JOIN {enrol} 
+                ON {course}.id={enrol}.courseid 
+            LEFT JOIN {user_enrolments} 
+                ON {user_enrolments}.enrolid = {enrol}.id 
+            LEFT JOIN {user} 
+                ON {user_enrolments}.userid = {user}.id 
+            WHERE {course}.fullname='Example Course'  
+            GROUP BY {user}.lastname 
+            ORDER BY CountOfEnrolled DESC 
+            LIMIT 5";
 
-        $counter = 0;
+        $result = $DB->get_records_sql($sql); //returns array of stdClass objects
+       // $this->content->text = print_r($result,true);
 
-        foreach($users as $user) {
-            $counter++;
+        foreach($result as $data) {
             $this->content->text .= '
                     <tr>
-                        <th scope="row">' . $counter . '</th>
-                        <td>' . $user->firstname . '</td>
-                        <td>' . $user->lastname . '</td>
+                        <th scope="row">' . $data->userlastname . '</th>
+                        <td>' . $data->coursename . '</td>
+                        <td>' . $data->countofenrolled . '</td>
                     </tr>';
         }
 

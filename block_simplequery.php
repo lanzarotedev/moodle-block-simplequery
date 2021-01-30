@@ -31,15 +31,52 @@ class block_simplequery extends block_base {
 
     function get_content() {
 
+        global $DB;
+
         if ($this->content !== NULL) {
             return $this->content;
         }
 
         $this->content = new stdClass;
-        $this->content->text = 'This is the text';
-        $this->content->footer = 'This is the footer';
 
+        $table_header = '<div class="table-responsive">
+            <caption>Table shows 10 last students first and last names</caption>
+            <table class="table table-striped table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                </tr>
+                </thead>
+                <tbody>';
 
+        $table_footer = '</div>
+                </tbody>
+            </table>';
+
+        $this->content->text = $table_header;
+
+        $sql = "SELECT firstname, lastname FROM {user}
+                ORDER BY id DESC LIMIT 10";
+
+        $users = $DB->get_records_sql($sql); //returns array of stdClass objects
+
+        $counter = 0;
+
+        foreach($users as $user) {
+            $counter++;
+            $this->content->text .= '
+                    <tr>
+                        <th scope="row">' . $counter . '</th>
+                        <td>' . $user->firstname . '</td>
+                        <td>' . $user->lastname . '</td>
+                    </tr>';
+        }
+
+        $this->content->text .= $table_footer;
+
+        $this->content->footer = "\n\nThis is the footer section\n\n";
         return $this->content;
     }
 

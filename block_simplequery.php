@@ -39,6 +39,31 @@ class block_simplequery extends block_base {
 
         $this->content = new stdClass;
 
+        $sql="SELECT {user}.lastname AS UserLastname,
+                    COUNT({user}.lastname) AS CountOfEnrolled,
+                    {course}.fullname AS CourseName
+            FROM mdl_course
+            LEFT JOIN {enrol}
+                ON {course}.id={enrol}.courseid
+            LEFT JOIN {user_enrolments}
+                ON {user_enrolments}.enrolid = {enrol}.id
+            LEFT JOIN {user}
+                ON {user_enrolments}.userid = {user}.id
+            WHERE {course}.fullname='Example Course'
+            GROUP BY {user}.lastname
+            ORDER BY CountOfEnrolled DESC
+            LIMIT 5";
+
+        $result = $DB->get_records_sql($sql); //returns array of stdClass objects
+
+        $this->content->text = $this->get_table($result);
+
+        $this->content->footer = 'This is the footer section';
+        return $this->content;
+    }
+
+    function get_table( $sql_result = array()) {
+
         $table_header = '<div class="table-responsive">
             <caption>Table shows 5 users enrolled on Example Course that have the same last name</caption>
             <table class="table table-striped table-hover">
@@ -55,31 +80,8 @@ class block_simplequery extends block_base {
                 </tbody>
             </table>';
 
-        $this->content->text = $table_header;
-
-//        $sql = "SELECT firstname, lastname FROM {user}
-//                ORDER BY id DESC LIMIT 10";
-
-        $sql="SELECT {user}.lastname AS UserLastname, 
-                    COUNT({user}.lastname) AS CountOfEnrolled, 
-                    {course}.fullname AS CourseName 
-            FROM mdl_course 
-            LEFT JOIN {enrol} 
-                ON {course}.id={enrol}.courseid 
-            LEFT JOIN {user_enrolments} 
-                ON {user_enrolments}.enrolid = {enrol}.id 
-            LEFT JOIN {user} 
-                ON {user_enrolments}.userid = {user}.id 
-            WHERE {course}.fullname='Example Course'  
-            GROUP BY {user}.lastname 
-            ORDER BY CountOfEnrolled DESC 
-            LIMIT 5";
-
-        $result = $DB->get_records_sql($sql); //returns array of stdClass objects
-       // $this->content->text = print_r($result,true);
-
-        foreach($result as $data) {
-            $this->content->text .= '
+        foreach($sql_result as $data) {
+            $table_header .= '
                     <tr>
                         <th scope="row">' . $data->userlastname . '</th>
                         <td>' . $data->coursename . '</td>
@@ -87,11 +89,8 @@ class block_simplequery extends block_base {
                     </tr>';
         }
 
-        $this->content->text .= $table_footer;
+        $table_header .= $table_footer;
 
-        $this->content->footer = "\n\nThis is the footer section\n\n";
-        return $this->content;
+        return $table_header;
     }
-
-
 }

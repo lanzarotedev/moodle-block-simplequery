@@ -23,9 +23,9 @@ In **seminars_bookings** table for _userid_ field foreign key points to mdl_user
 The tables were created using Moodle interface: **XMLDB Editor** which creates **install.xml** file in db directory. Moodle uses the file during plugin installation to create tables.
 
 #Additional Video Resources:
-* [**How to create Moodle simple plugin**](https://www.lanzarote.dev/how-to-create-simple-block-plugin-in-moodle/ "How to create Moodle simple block plugin") 
-* [**How to create Moodle tables with plugin**](https://www.lanzarote.dev/how-to-create-tables-in-moodle-with-xmldb-editor/ "How to create tables in Moodle using plugin" )
-* [**How to use Moodle block plugin for SQL output**](https://www.lanzarote.dev/how-to-use-moodle-block-plugin-for-sql-output/ "How to use Moodle block plugin for SQL output")
+* [**How to create Moodle simple plugin**](https://www.learningonthebeach.com/how-to-create-simple-block-plugin-in-moodle/ "How to create Moodle simple block plugin") 
+* [**How to create Moodle tables with plugin**](https://www.learningonthebeach.com/how-to-create-tables-in-moodle-with-xmldb-editor/ "How to create tables in Moodle using plugin" )
+* [**How to use Moodle block plugin for SQL output**](https://www.learningonthebeach.com/how-to-use-moodle-block-plugin-for-sql-output/ "How to use Moodle block plugin for SQL output")
 
 The code contains both install.xml file and query used in the last video.
 
